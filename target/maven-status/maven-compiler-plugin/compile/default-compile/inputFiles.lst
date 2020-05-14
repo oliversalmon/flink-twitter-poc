@@ -1,2 +1,4 @@
-/Users/oliverbuckley-salmon/git/twitter/src/main/java/org/example/streaming/StreamingJob.java
-/Users/oliverbuckley-salmon/git/twitter/src/main/java/org/example/streaming/BatchJob.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/TweetUserAndSubjectIdentifier.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/TweetTypeIdentifer.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/StreamingJob.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/TweetTypeSelector.java

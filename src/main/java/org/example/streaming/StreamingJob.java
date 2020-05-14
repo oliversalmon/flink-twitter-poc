@@ -18,7 +18,17 @@
 
 package org.example.streaming;
 
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.streaming.api.CheckpointingMode;
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.connectors.twitter.TwitterSource;
+
+import java.util.Properties;
 
 /**
  * Skeleton for a Flink Streaming Job.
@@ -37,26 +47,32 @@ public class StreamingJob {
 	public static void main(String[] args) throws Exception {
 		// set up the streaming execution environment
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+		env.getConfig().setAutoWatermarkInterval(1000);
+		env.enableCheckpointing(5000, CheckpointingMode.EXACTLY_ONCE);
+		// Set up Twitter as the data source
+		Properties props = new Properties();
+		props.setProperty(TwitterSource.CONSUMER_KEY, "lDSDKAh07M5HAktpZIQkwi0Nn");
+		props.setProperty(TwitterSource.CONSUMER_SECRET, "Zh3CldrxP8IbEDeTYTSlGghwgtoLwXCRqCLjWY6KvIqgvrJhFl");
+		props.setProperty(TwitterSource.TOKEN, "468804467-L5O6Mu0PzETEIX8gXDSpvfcqcg07lNOpr413wGQO");
+		props.setProperty(TwitterSource.TOKEN_SECRET, "zSISFJMu0NxMJMhXNVmNWxQhSSt1RmM2dHW3pMBlt5pYZ");
+		DataStream<String> rawTweets = env.addSource(new TwitterSource(props));
 
-		/*
-		 * Here, you can start creating your execution plan for Flink.
-		 *
-		 * Start with getting some data from the environment, like
-		 * 	env.readTextFile(textPath);
-		 *
-		 * then, transform the resulting DataStream<String> using operations
-		 * like
-		 * 	.filter()
-		 * 	.flatMap()
-		 * 	.join()
-		 * 	.coGroup()
-		 *
-		 * and many more.
-		 * Have a look at the programming guide for the Java API:
-		 *
-		 * https://flink.apache.org/docs/latest/apis/streaming/index.html
-		 *
-		 */
+		// Start processing
+		SplitStream<Tuple2<String, String>> split = rawTweets
+				.map(new TweetTypeIdentifer())
+				.split(new TweetTypeSelector());
+		DataStream<Tuple4<String,String, String, String>> newTweets = split
+				.select("created")
+				.map(new TweetUserAndSubjectIdentifier())
+				.keyBy(0);
+		DataStream<Tuple2<String,String>> deletedTweets = split.select("deleted");
+		newTweets.print();
+		//deletedTweets.print();
+
+
+
+
 
 		// execute program
 		env.execute("Flink Streaming Java API Skeleton");

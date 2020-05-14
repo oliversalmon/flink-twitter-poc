@@ -1,2 +1,4 @@
 org/example/streaming/StreamingJob.class
-org/example/streaming/BatchJob.class
+org/example/streaming/TweetTypeIdentifer.class
+org/example/streaming/TweetUserAndSubjectIdentifier.class
+org/example/streaming/TweetTypeSelector.class
