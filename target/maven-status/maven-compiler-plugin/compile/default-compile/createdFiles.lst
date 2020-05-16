@@ -1,4 +1,9 @@
+org/example/streaming/sinks/DeletedTweets.class
 org/example/streaming/StreamingJob.class
-org/example/streaming/TweetTypeIdentifer.class
-org/example/streaming/TweetUserAndSubjectIdentifier.class
-org/example/streaming/TweetTypeSelector.class
+org/example/streaming/util/TweetTypeSelector.class
+org/example/streaming/sinks/CountByUserSink.class
+org/example/streaming/util/TimeStampWatermarkGenerator.class
+org/example/streaming/sinks/TweetSink.class
+org/example/streaming/functions/TweetTypeIdentifer.class
+org/example/streaming/functions/UserTweetCounter.class
+org/example/streaming/functions/TweetUserAndSubjectIdentifier.class

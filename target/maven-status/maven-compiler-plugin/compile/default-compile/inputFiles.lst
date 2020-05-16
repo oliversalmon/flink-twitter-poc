@@ -1,4 +1,9 @@
-/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/TweetUserAndSubjectIdentifier.java
-/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/TweetTypeIdentifer.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/util/TweetTypeSelector.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/sinks/DeletedTweets.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/functions/UserTweetCounter.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/sinks/TweetSink.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/util/TimeStampWatermarkGenerator.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/sinks/CountByUserSink.java
 /Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/StreamingJob.java
-/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/TweetTypeSelector.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/functions/TweetUserAndSubjectIdentifier.java
+/Users/oliverbuckley-salmon/git/flink-twitter-poc/src/main/java/org/example/streaming/functions/TweetTypeIdentifer.java

@@ -19,14 +19,25 @@
 package org.example.streaming;
 
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner;
+import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.twitter.TwitterSource;
+import org.example.streaming.functions.TweetTypeIdentifer;
+import org.example.streaming.functions.TweetUserAndSubjectIdentifier;
+import org.example.streaming.functions.UserTweetCounter;
+import org.example.streaming.sinks.CountByUserSink;
+import org.example.streaming.sinks.DeletedTweets;
+import org.example.streaming.sinks.TweetSink;
+import org.example.streaming.util.TimeStampWatermarkGenerator;
+import org.example.streaming.util.TweetTypeSelector;
 
 import java.util.Properties;
 
@@ -56,25 +67,36 @@ public class StreamingJob {
 		props.setProperty(TwitterSource.CONSUMER_SECRET, "Zh3CldrxP8IbEDeTYTSlGghwgtoLwXCRqCLjWY6KvIqgvrJhFl");
 		props.setProperty(TwitterSource.TOKEN, "468804467-L5O6Mu0PzETEIX8gXDSpvfcqcg07lNOpr413wGQO");
 		props.setProperty(TwitterSource.TOKEN_SECRET, "zSISFJMu0NxMJMhXNVmNWxQhSSt1RmM2dHW3pMBlt5pYZ");
-		DataStream<String> rawTweets = env.addSource(new TwitterSource(props));
+		DataStream<String> rawTweets = env.addSource(new TwitterSource(props)).name("Twitter Source");
 
 		// Start processing
 		SplitStream<Tuple2<String, String>> split = rawTweets
 				.map(new TweetTypeIdentifer())
+				.name("Tweet Information Extractor")
 				.split(new TweetTypeSelector());
 		DataStream<Tuple4<String,String, String, String>> newTweets = split
 				.select("created")
-				.map(new TweetUserAndSubjectIdentifier())
+				.map(new TweetUserAndSubjectIdentifier()).name("Get User, User Id and Message")
+				.assignTimestampsAndWatermarks(new TimeStampWatermarkGenerator())
 				.keyBy(0);
 		DataStream<Tuple2<String,String>> deletedTweets = split.select("deleted");
-		newTweets.print();
-		//deletedTweets.print();
+		deletedTweets
+				.addSink(new DeletedTweets())
+				.name("Deleted Tweets Mongo Sink");
+		newTweets
+				.addSink(new TweetSink())
+				.name("New Tweets Mongo Sink");
+		newTweets.keyBy(0)
+				.window(TumblingEventTimeWindows.of(Time.days(1)))
+				.aggregate(new UserTweetCounter()).name("1 Day Tweet Count Aggregator")
+				.addSink(new CountByUserSink()).name("Count of Tweets per User per Day Mongo Sink");
+
 
 
 
 
 
 		// execute program
-		env.execute("Flink Streaming Java API Skeleton");
+		env.execute("Flink PoC for Taniem");
 	}
 }
