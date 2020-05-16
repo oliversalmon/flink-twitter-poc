@@ -87,8 +87,8 @@ public class StreamingJob {
 				.addSink(new TweetSink())
 				.name("New Tweets Mongo Sink");
 		newTweets.keyBy(0)
-				.window(TumblingEventTimeWindows.of(Time.days(1)))
-				.aggregate(new UserTweetCounter()).name("1 Day Tweet Count Aggregator")
+				.window(TumblingEventTimeWindows.of(Time.hours(1)))
+				.aggregate(new UserTweetCounter()).name("1 Hour Tweet Count Aggregator")
 				.addSink(new CountByUserSink()).name("Count of Tweets per User per Day Mongo Sink");
 
 
