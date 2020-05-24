@@ -26,7 +26,8 @@ public class TweetSink extends RichSinkFunction<Tuple4<String, String, String, S
     @Override
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);
-        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        mongoClient = MongoClients.create("mongodb://root:1oNdZOMJBd@localhost:27017");
+
         database = mongoClient.getDatabase("TWITTER");
         coll = database.getCollection("tweets");
     }
