@@ -19,7 +19,8 @@ public class CountByUserSink extends RichSinkFunction<String> {
     @Override
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);
-        mongoClient = MongoClients.create("mongodb://localhost:27017");
+        //mongoClient = MongoClients.create("mongodb://localhost:27017");
+        mongoClient = MongoClients.create("mongodb://root:F4Mw9Q2xiQ@flink-mongo-release-mongodb.default.svc.cluster.local:27017");
         database = mongoClient.getDatabase("TWITTER");
         coll = database.getCollection("num_tweets_by_user");
     }
